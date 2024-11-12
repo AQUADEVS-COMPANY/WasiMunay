@@ -1,0 +1,19 @@
+@Composable
+private fun MyHeader(modifier: Modifier = Modifier) {
+
+}
+
+@Composable
+private fun MyBody(modifier: Modifier = Modifier) {
+
+}
+
+@Composable
+private fun MyFooter(modifier: Modifier = Modifier) {
+
+}
+
+@Composable
+private fun MyDialog(modifier: Modifier = Modifier) {
+
+}

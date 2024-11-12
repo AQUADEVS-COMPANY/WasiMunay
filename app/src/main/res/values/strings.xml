@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">WasiMunay</string>
+    <string name="subTitleLogin">Encuentra tu hogar ideal</string>
+    <string name="quetion1Login">¿Cómo deseas utilizar WasiMunay?</string>
+    <string name="iamLandlord">"Soy propietario "</string>
+    <string name="iamTenant">Soy inquilino</string>
+    <string name="msgWelcomeScreen">Puedes cambiar tu rol en cualquier momento desde la configuración de tu perfil</string>
+    <string name="quetionAccountWelcome">¿Ya tienes una cuenta?</string>
+    <string name="logIn">Iniciar sesión</string>
+    <string name="email">Correo electrónico</string>
+</resources>
