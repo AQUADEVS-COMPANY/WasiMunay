@@ -75,6 +75,8 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
+    //LIVE DATA
+    implementation(libs.androidx.livedata)
 }
 
 kapt {

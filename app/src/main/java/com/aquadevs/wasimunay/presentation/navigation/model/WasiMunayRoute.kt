@@ -12,4 +12,6 @@ package com.aquadevs.wasimunay.presentation.navigation.model
 sealed class WasiMunayRoute(val route: String) {
     data object WelcomeScreenRoute : WasiMunayRoute(route = "welcomeScreenRoute")
     data object LoginScreenRoute : WasiMunayRoute(route = "loginScreenRoute")
+    data object MainScreenRoute : WasiMunayRoute(route = "mainScreenRoute")
+    data object DetailScreenRoute : WasiMunayRoute(route = "detailScreenRoute")
 }
