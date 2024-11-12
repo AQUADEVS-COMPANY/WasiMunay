@@ -5,7 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.aquadevs.wasimunay.presentation.features.detail.DetailScreen
 import com.aquadevs.wasimunay.presentation.features.login.LoginScreen
+import com.aquadevs.wasimunay.presentation.features.main.MainScreen
 import com.aquadevs.wasimunay.presentation.features.welcome.WelcomeScreen
 import com.aquadevs.wasimunay.presentation.navigation.model.WasiMunayRoute
 
@@ -41,7 +43,27 @@ fun NavWasiMunay(modifier: Modifier = Modifier) {
         composable(route = WasiMunayRoute.LoginScreenRoute.route){
             LoginScreen(
                 goToMain = {
+                    navController.navigate(WasiMunayRoute.MainScreenRoute.route){
+                        popUpTo(route = WasiMunayRoute.LoginScreenRoute.route){
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
 
+        composable(route = WasiMunayRoute.MainScreenRoute.route){
+            MainScreen(
+                goToDetail = {
+                    navController.navigate(WasiMunayRoute.DetailScreenRoute.route)
+                }
+            )
+        }
+
+        composable(route = WasiMunayRoute.DetailScreenRoute.route){
+            DetailScreen(
+                goToMain = {
+                    navController.popBackStack()
                 }
             )
         }
