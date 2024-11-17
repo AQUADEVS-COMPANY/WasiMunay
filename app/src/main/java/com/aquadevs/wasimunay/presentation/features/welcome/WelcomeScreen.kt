@@ -1,20 +1,15 @@
 package com.aquadevs.wasimunay.presentation.features.welcome
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,20 +32,33 @@ import com.aquadevs.wasimunay.ui.theme.OnBackgroundDark
 
 @Composable
 fun WelcomeScreen(goToLogIn: () -> Unit) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        MyHeader()
-        MyBody(goToLogIn = goToLogIn)
-        MyFooter()
-        MyDialog()
+        // Imagen de fondo
+        Image(
+            painter = painterResource(id = R.drawable.foto1), // Asegúrate de que el nombre coincide
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Contenido de la pantalla
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)), // Fondo semitransparente para mejorar la legibilidad
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            MyHeader()
+            MyBody(goToLogIn = goToLogIn)
+            MyFooter()
+            MyDialog()
+        }
     }
 }
-
 @Composable
 private fun MyHeader(modifier: Modifier = Modifier) {
     Column(
