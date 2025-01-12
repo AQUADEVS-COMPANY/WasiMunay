@@ -13,7 +13,8 @@
     <string name="orSingUpWith">Ó registrate con</string>
     <string name="continueWithGoogle">Continuar con google</string>
     <string name="continueWithApple">Continuar con apple</string>
-    <string name="searchLocationMain">Buscar ubicación...</string>
+    <string name="searchLocationMain">Buscar ubicación</string>
+    <string name="searchApartmentMain">Buscar departamento</string>
     <string name="price">Precio</string>
     <string name="rooms">Habitaciones</string>
     <string name="type">Tipo</string>
@@ -28,4 +29,14 @@
     <string name="location">Ubicación</string>
     <string name="fullAddress">Dirección completa</string>
     <string name="selectLocation">Seleccionar ubicación</string>
+    <string name="msgUserContinueGoogle">Inicie sesión con Google para continuar</string>
+    <string name="startWithGoogle">Iniciar con google</string>
+    <string name="hello">Hola</string>
+    <string name="newDepartment">Nuevo departamento</string>
+    <string name="sqaureMeters">m2</string>
+    <string name="register">Registrar</string>
+    <string name="enterLinkApartment">Link del apartamento</string>
+    <string name="verify">Verificar</string>
+    <string name="enterLink">Ingresa enlace</string>
+    <string name="logOut">Cerrar sesión</string>
 </resources>

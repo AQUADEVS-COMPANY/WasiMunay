@@ -13,5 +13,7 @@ sealed class WasiMunayRoute(val route: String) {
     data object WelcomeScreenRoute : WasiMunayRoute(route = "welcomeScreenRoute")
     data object LoginScreenRoute : WasiMunayRoute(route = "loginScreenRoute")
     data object MainScreenRoute : WasiMunayRoute(route = "mainScreenRoute")
-    data object DetailScreenRoute : WasiMunayRoute(route = "detailScreenRoute")
+    data object DetailScreenRoute : WasiMunayRoute(route = "detailScreenRoute?paramStr={paramStr}"){
+        fun paramStr(uid:String = "") = "detailScreenRoute?paramStr=$uid"
+    }
 }

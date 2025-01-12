@@ -8,7 +8,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.frankgf18.amazona" />
+                  <option name="appId" value="com.aquadevs.alertvita" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.aquadevs.wasimunay" />
+                  <option name="mobileSdkAppId" value="1:93461428449:android:7404dbd09116f735f41fa0" />
+                  <option name="projectId" value="wasimunay-89c8f" />
+                  <option name="projectNumber" value="93461428449" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
