@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "93461428449",
+    "project_id": "wasimunay-89c8f",
+    "storage_bucket": "wasimunay-89c8f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93461428449:android:7404dbd09116f735f41fa0",
+        "android_client_info": {
+          "package_name": "com.aquadevs.wasimunay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93461428449-4l44v9nu81ffe9lhje6qkn47c5a325i2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aquadevs.wasimunay",
+            "certificate_hash": "f1e1e506e75b95dbeca985923cdbc064b31e3f59"
+          }
+        },
+        {
+          "client_id": "93461428449-ushfsqkg886bmpej7rq6sqnl1oliuns9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUGCZeSZREcoaYfRrx9XvyCMxrBlp_0Yc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "93461428449-ushfsqkg886bmpej7rq6sqnl1oliuns9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

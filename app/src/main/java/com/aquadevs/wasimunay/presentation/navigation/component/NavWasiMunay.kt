@@ -2,9 +2,11 @@ package com.aquadevs.wasimunay.presentation.navigation.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.aquadevs.wasimunay.presentation.features.detail.DetailScreen
 import com.aquadevs.wasimunay.presentation.features.login.LoginScreen
 import com.aquadevs.wasimunay.presentation.features.main.MainScreen
@@ -30,12 +32,15 @@ fun NavWasiMunay(modifier: Modifier = Modifier) {
     ){
         composable(route = WasiMunayRoute.WelcomeScreenRoute.route){
             WelcomeScreen(
-                goToLogIn = {
-                    navController.navigate(WasiMunayRoute.LoginScreenRoute.route){
+                goToMain = {
+                    navController.navigate(WasiMunayRoute.MainScreenRoute.route){
                         popUpTo(route = WasiMunayRoute.WelcomeScreenRoute.route){
                             inclusive = true
                         }
                     }
+                },
+                goToDetail = {
+                    navController.navigate(WasiMunayRoute.DetailScreenRoute.paramStr())
                 }
             )
         }
@@ -55,14 +60,28 @@ fun NavWasiMunay(modifier: Modifier = Modifier) {
         composable(route = WasiMunayRoute.MainScreenRoute.route){
             MainScreen(
                 goToDetail = {
-                    navController.navigate(WasiMunayRoute.DetailScreenRoute.route)
+                    navController.navigate(WasiMunayRoute.DetailScreenRoute.paramStr(it))
+                },
+                goToMain = {
+                    navController.navigate(WasiMunayRoute.WelcomeScreenRoute.route){
+                        popUpTo(route = WasiMunayRoute.MainScreenRoute.route){
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
 
-        composable(route = WasiMunayRoute.DetailScreenRoute.route){
+        composable(
+            route = WasiMunayRoute.DetailScreenRoute.route,
+            arguments = listOf(
+                navArgument(name = "paramStr") {
+                    type = NavType.StringType
+                }
+            )
+        ){
             DetailScreen(
-                goToMain = {
+                goBack = {
                     navController.popBackStack()
                 }
             )

@@ -1,6 +1,5 @@
 package com.aquadevs.wasimunay.presentation.features.main
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,29 +23,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.aquadevs.wasimunay.R
+import com.aquadevs.wasimunay.core.Composable.DialogLoading
 import com.aquadevs.wasimunay.presentation.common.ButtonCustom
 import com.aquadevs.wasimunay.presentation.common.CardCustom
 import com.aquadevs.wasimunay.presentation.common.OutlinedTextFieldCustom
 import com.aquadevs.wasimunay.presentation.common.TextCustom
-import com.aquadevs.wasimunay.presentation.model.main.MainDto
+import com.aquadevs.wasimunay.presentation.model.main.ApartmentDto
 import com.aquadevs.wasimunay.ui.theme.OnBackgroundDark
 
 /***
@@ -58,15 +60,18 @@ import com.aquadevs.wasimunay.ui.theme.OnBackgroundDark
  ***/
 
 @Composable
-fun MainScreen(goToDetail:() -> Unit) {
+fun MainScreen(
+    goToDetail: (id: String) -> Unit,
+    goToMain: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black)
+            .background(color = Color.Black).padding(20.dp)
     ) {
         MyHeader()
-        MyBody(goToDetail = goToDetail)
-        MyFooter()
+        MyBody(modifier = Modifier.weight(1f), goToDetail = goToDetail)
+        MyFooter(goToMain)
         MyDialog()
     }
 }
@@ -76,49 +81,33 @@ private fun MyHeader(mainViewModel: MainViewModel = hiltViewModel()) {
     var searchLocation by remember { mutableStateOf("") }
 
     CardCustom(
-        modifier = Modifier.padding(20.dp),
         cornerRadius = 15,
         background = OnBackgroundDark
     ) {
-        Column(
-            modifier = Modifier.padding(15.dp)
-        ) {
+        Column(modifier = Modifier.padding(15.dp)) {
             OutlinedTextFieldCustom(
-                modifier = Modifier.fillMaxWidth(),
-                label = stringResource(R.string.searchLocationMain),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp),
+                label = stringResource(R.string.searchApartmentMain),
                 value = searchLocation,
-                onValue = { searchLocation = it }
-            )
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                items(mainViewModel.listName) { names ->
-                    ButtonCustom(
-                        textColor = Color.White,
-                        backgroundColor = Color.Blue,
-                        textButton = stringResource(names),
-                        onClick = {},
-                        shape = RoundedCornerShape(percent = 40),
-                        modifier = Modifier.padding(horizontal = 5.dp),
-                        fontSize = 12
-                    )
+                onValue = {
+                    searchLocation = it
+                    mainViewModel.filterSearchApartment(it)
                 }
-            }
+            )
         }
     }
 }
 
 @Composable
-private fun MyBody(mainViewModel: MainViewModel = hiltViewModel(), goToDetail: () -> Unit) {
-    LazyColumn(
-        modifier = Modifier.padding(horizontal = 20.dp),
-    ) {
-        items(mainViewModel.listDepartment) {
-            MyItem(mainViewModel, it) {
-                goToDetail()
+private fun MyBody(
+    modifier: Modifier,
+    mainViewModel: MainViewModel = hiltViewModel(),
+    goToDetail: (id: String) -> Unit
+) {
+    LazyColumn(modifier = modifier.padding(vertical = 6.dp)) {
+        items(mainViewModel.listApartment) {
+            MyItem(mainViewModel, it) { apartment ->
+                goToDetail(apartment.id)
             }
         }
     }
@@ -127,48 +116,40 @@ private fun MyBody(mainViewModel: MainViewModel = hiltViewModel(), goToDetail: (
 @Composable
 private fun MyItem(
     mainViewModel: MainViewModel,
-    mainDto: MainDto,
-    onClick: (MainDto) -> Unit
+    mainDto: ApartmentDto,
+    onClick: (ApartmentDto) -> Unit
 ) {
     CardCustom(
-        modifier = Modifier.padding(bottom = 10.dp),
+        modifier = Modifier.padding(vertical = 6.dp),
         cornerRadius = 12,
         background = OnBackgroundDark
     ) {
         Column(
-            modifier = Modifier.padding(vertical = 25.dp, horizontal = 20.dp)
+            modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp)
         ) {
-            Image(
-                painter = painterResource(mainDto.img),
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-                modifier = Modifier
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(percent = 15))
+            TextCustom(
+                text = mainDto.apartmentName,
+                fontSize = 22,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
             )
 
-            Row(
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(mainDto.linkApartment)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextCustom(
-                    text = mainDto.departmentName,
-                    fontSize = 20,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                    color = Color.White,
-                    maxLines = 1
-                )
-                ButtonCustom(
-                    textButton = stringResource(mainViewModel.getText(mainDto.departmentState)),
-                    backgroundColor = mainViewModel.getBackGround(mainDto.departmentState)
-                        .copy(alpha = 0.6f),
-                    textColor = mainViewModel.getBackGround(mainDto.departmentState),
-                    onClick = {}
-                )
-            }
+                    .height(200.dp)
+                    .padding(top = 10.dp)
+                    .clip(RoundedCornerShape(percent = 15))
+            )
 
             Row(
                 modifier = Modifier
@@ -178,7 +159,7 @@ private fun MyItem(
                 horizontalArrangement = Arrangement.Center
             ) {
                 TextCustom(
-                    text = "${mainDto.departmentNumber} ${
+                    text = "${mainDto.roomNumber} ${
                         stringResource(R.string.rooms).toLowerCase(
                             locale = Locale.current
                         )
@@ -248,16 +229,46 @@ private fun MyItem(
                     }
                 )
             }
+
+            ButtonCustom(
+                textButton = stringResource(mainViewModel.getText(mainDto.apartmentState)),
+                backgroundColor = mainViewModel.getBackGround(mainDto.apartmentState)
+                    .copy(alpha = 0.6f),
+                textColor = Color.White,
+                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            )
         }
     }
 }
 
 @Composable
-private fun MyFooter(modifier: Modifier = Modifier) {
+private fun MyFooter(
+    goToMain: () -> Unit,
+    mainViewModel: MainViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
 
+    Row(modifier = Modifier) {
+        ButtonCustom(
+            textButton = stringResource(R.string.logOut),
+            backgroundColor = Color.DarkGray,
+            modifier = Modifier
+                .height(45.dp)
+                .fillMaxWidth()
+        ) {
+            mainViewModel.logOutSession(context) {
+                goToMain()
+            }
+        }
+    }
 }
 
 @Composable
-private fun MyDialog(modifier: Modifier = Modifier) {
+private fun MyDialog(mainViewModel: MainViewModel = hiltViewModel()) {
+    val isLoading by mainViewModel.isLoading.observeAsState(false)
 
+    if (isLoading) DialogLoading()
 }

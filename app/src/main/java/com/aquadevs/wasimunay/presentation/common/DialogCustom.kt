@@ -12,7 +12,7 @@ import com.aquadevs.wasimunay.ui.theme.validateTheme
 
 @Composable
 fun DialogCustom(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     cornerRadius: Int = 15,
     background:Color = validateTheme().surface,
     verticalArrangement:Arrangement.Vertical = Arrangement.Top,

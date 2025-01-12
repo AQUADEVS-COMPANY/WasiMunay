@@ -4,6 +4,7 @@ plugins {
 
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -77,6 +78,22 @@ dependencies {
 
     //LIVE DATA
     implementation(libs.androidx.livedata)
+
+    //FIREBASE
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.play.services.auth)
+
+    //ROOM
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    //COIL
+    implementation(libs.coil.compose)
 }
 
 kapt {
