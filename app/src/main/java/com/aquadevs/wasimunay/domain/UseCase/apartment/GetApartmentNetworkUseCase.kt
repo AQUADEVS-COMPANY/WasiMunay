@@ -1,7 +1,6 @@
 package com.aquadevs.wasimunay.domain.UseCase.apartment
 
 import com.aquadevs.wasimunay.core.Constants.CO_APARTMENT
-import com.aquadevs.wasimunay.core.Constants.CO_APARTMENT_ID_CREATION_USER
 import com.aquadevs.wasimunay.domain.Model.ApartmentModel
 import com.aquadevs.wasimunay.presentation.model.main.ApartmentDto
 import com.google.firebase.firestore.FirebaseFirestore

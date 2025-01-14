@@ -1,7 +1,9 @@
 package com.aquadevs.wasimunay.presentation.features.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -64,16 +67,28 @@ fun MainScreen(
     goToDetail: (id: String) -> Unit,
     goToMain: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Black).padding(20.dp)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        MyHeader()
-        MyBody(modifier = Modifier.weight(1f), goToDetail = goToDetail)
-        MyFooter(goToMain)
-        MyDialog()
+        Image(
+            painter = painterResource(R.drawable.img_1),
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Transparent).padding(20.dp)
+        ) {
+            MyHeader()
+            MyBody(modifier = Modifier.weight(1f), goToDetail = goToDetail)
+            MyFooter(goToMain)
+            MyDialog()
+        }
     }
+
 }
 
 @Composable

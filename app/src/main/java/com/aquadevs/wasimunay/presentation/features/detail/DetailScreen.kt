@@ -1,7 +1,9 @@
 package com.aquadevs.wasimunay.presentation.features.detail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,19 +11,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,6 +55,15 @@ import com.aquadevs.wasimunay.presentation.common.OutlinedTextFieldCustom
 import com.aquadevs.wasimunay.presentation.common.TextCustom
 import com.aquadevs.wasimunay.presentation.model.main.ApartmentDto
 import com.aquadevs.wasimunay.ui.theme.OnBackgroundDark
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.launch
 
 /***
  * Class: DetalleScreen
@@ -57,16 +78,27 @@ import com.aquadevs.wasimunay.ui.theme.OnBackgroundDark
 fun DetailScreen(
     goBack: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .verticalScroll(rememberScrollState())
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        MyHeader(goBack = goBack)
-        MyBody()
-        MyFooter(goBack = goBack)
-        MyDialog()
+        Image(
+            painter = painterResource(R.drawable.img_1),
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent)
+                .verticalScroll(rememberScrollState())
+        ) {
+            MyHeader(goBack = goBack)
+            MyBody()
+            MyFooter(goBack = goBack)
+            MyDialog()
+        }
     }
 }
 
@@ -400,3 +432,80 @@ private fun MyDialogImage(detailViewModel: DetailViewModel) {
         }
     }
 }
+
+/*
+@Composable
+fun MyGoogleMaps(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            GoogleMap(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues = it)
+            ) {
+
+            }
+        }
+
+        ButtonCustom(
+            textButton = "Capturar ubicación"
+        ) {
+
+        }
+    }
+}
+
+@Composable
+fun LocationPickerScreen() {
+    var selectedLocation by remember { mutableStateOf<LatLng?>(null) }
+
+    MapWithMarkerSelector(
+        initialLocation = LatLng(-12.0464, -77.0428) // Ejemplo: Ubicación inicial
+    ) { location ->
+        selectedLocation = location
+        // Realiza una acción con la ubicación seleccionada
+        Log.d("LocationPicker", "Ubicación seleccionada: $location")
+    }
+}
+
+@Composable
+fun MapWithMarkerSelector(
+    initialLocation: LatLng = LatLng(-12.0464, -77.0428), // Ubicación inicial (Lima, Perú)
+    onLocationSelected: (LatLng) -> Unit // Callback para devolver la ubicación seleccionada
+) {
+    // Estado para almacenar la ubicación del marcador
+    var markerPosition by remember { mutableStateOf(initialLocation) }
+    var cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(initialLocation, 15f) // Zoom inicial
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            onMapClick = { latLng ->
+                // Actualiza la posición del marcador al hacer clic en el mapa
+                markerPosition = latLng
+            }
+        ) {
+            val markerState = rememberMarkerState(position = markerPosition)
+            // Renderiza el marcador en la posición seleccionada
+            Marker(
+                state = markerState,
+                title = "Ubicación seleccionada",
+                snippet = "${markerPosition.latitude}, ${markerPosition.longitude}"
+            )
+        }
+    }
+
+    // Llama al callback cuando el marcador cambie
+    LaunchedEffect(markerPosition) {
+        onLocationSelected(markerPosition)
+    }
+}
+
+*/

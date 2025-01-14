@@ -27,6 +27,10 @@ roomKtx = "2.6.1"
 
 #COIL
 coilCompose = "2.5.0"
+#GOOGLE MAPS
+mapsCompose = "6.1.2"
+playServicesLocation = "21.3.0"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +72,10 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx"
 
 #COIL
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+
+#GOOGLE MAPS
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
