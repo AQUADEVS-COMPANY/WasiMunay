@@ -94,6 +94,10 @@ dependencies {
 
     //COIL
     implementation(libs.coil.compose)
+
+    //GOOGLE MAPS
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
 }
 
 kapt {
