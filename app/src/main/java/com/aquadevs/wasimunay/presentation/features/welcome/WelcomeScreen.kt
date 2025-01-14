@@ -5,8 +5,10 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +24,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,17 +56,29 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 @Composable
 fun WelcomeScreen(goToMain: () -> Unit, goToDetail: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        MyHeader()
-        MyBody(goToMain = goToMain, goToDetail = goToDetail)
-        MyDialog()
+        Image(
+            painter = painterResource(R.drawable.img_2),
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            MyHeader()
+            MyBody(goToMain = goToMain, goToDetail = goToDetail)
+            MyDialog()
+        }
     }
+
 }
 
 @Composable
@@ -102,7 +118,7 @@ private fun MyBody(
             .fillMaxWidth()
             .padding(horizontal = 40.dp, vertical = 10.dp),
         cornerRadius = 15,
-        background = OnBackgroundDark
+        background = OnBackgroundDark.copy(alpha = 0.7f)
     ) {
         AnimatedVisibility(isLogInGoogle) {
             MyBodyGoogle(welcomeViewModel)
@@ -204,7 +220,8 @@ fun MyButtonGoogle(welcomeViewModel: WelcomeViewModel) {
 
     OutlinedButtonCustom(
         textButton = stringResource(R.string.startWithGoogle),
-        modifier = Modifier.fillMaxWidth().height(45.dp)
+        modifier = Modifier.fillMaxWidth().height(45.dp),
+        textColor = Color.White
     ) {
         val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(ID_TOKEN_GOOGLE)
