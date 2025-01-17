@@ -27,10 +27,19 @@ roomKtx = "2.6.1"
 
 #COIL
 coilCompose = "2.5.0"
+
 #GOOGLE MAPS
 mapsCompose = "6.1.2"
 playServicesLocation = "21.3.0"
 
+#CAMERA X
+cameraCore = "1.3.0-rc01"
+
+#LOTTIE
+lottieCompose = "4.2.0"
+
+#PERMISSIONS
+accompanistPermissions = "0.28.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -76,6 +85,20 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose"
 #GOOGLE MAPS
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+#CAMERA X
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraCore" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraCore" }
+androidx-camera-video = { module = "androidx.camera:camera-video", version.ref = "cameraCore" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCore" }
+androidx-camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "cameraCore" }
+
+#LOTTIE
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
+
+#PERMISSIONS
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

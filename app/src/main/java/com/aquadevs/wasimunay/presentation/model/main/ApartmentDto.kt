@@ -1,5 +1,6 @@
 package com.aquadevs.wasimunay.presentation.model.main
 
+import android.graphics.Bitmap
 import com.aquadevs.wasimunay.domain.Model.ApartmentModel
 
 data class ApartmentDto(
@@ -12,7 +13,8 @@ data class ApartmentDto(
     val departmentPrice: Double = 0.0,
     val description:String = "",
     val location:String = "",
-    val linkApartment:String = ""
+    val linkApartment:String = "",
+    val bitmap: Bitmap? = null
 ){
     fun toApartmentModel():ApartmentModel{
         return ApartmentModel(

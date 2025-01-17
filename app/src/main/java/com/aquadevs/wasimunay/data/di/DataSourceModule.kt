@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.aquadevs.wasimunay.core.Constants.NAME_DATABASE
 import com.aquadevs.wasimunay.data.database.AppDataBase
+import com.aquadevs.wasimunay.data.database.dao.CameraDao
 import com.aquadevs.wasimunay.data.database.dao.UserDao
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -54,5 +55,11 @@ class DataSourceModule {
     @Provides
     fun provideProfileDao(appDataBase: AppDataBase) : UserDao {
         return appDataBase.userDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCameraDao(appDataBase: AppDataBase) : CameraDao {
+        return appDataBase.cameraDao()
     }
 }

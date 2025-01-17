@@ -1,5 +1,6 @@
 package com.aquadevs.wasimunay.presentation.features.main
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -25,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -42,6 +46,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.aquadevs.wasimunay.R
@@ -50,6 +56,7 @@ import com.aquadevs.wasimunay.presentation.common.ButtonCustom
 import com.aquadevs.wasimunay.presentation.common.CardCustom
 import com.aquadevs.wasimunay.presentation.common.OutlinedTextFieldCustom
 import com.aquadevs.wasimunay.presentation.common.TextCustom
+import com.aquadevs.wasimunay.presentation.features.welcome.WelcomeViewModel
 import com.aquadevs.wasimunay.presentation.model.main.ApartmentDto
 import com.aquadevs.wasimunay.ui.theme.OnBackgroundDark
 
@@ -80,8 +87,10 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Color.Transparent).padding(20.dp)
+                .background(color = Color.Transparent)
+                .padding(20.dp)
         ) {
+            MyFunctionViewModel()
             MyHeader()
             MyBody(modifier = Modifier.weight(1f), goToDetail = goToDetail)
             MyFooter(goToMain)
@@ -101,7 +110,9 @@ private fun MyHeader(mainViewModel: MainViewModel = hiltViewModel()) {
     ) {
         Column(modifier = Modifier.padding(15.dp)) {
             OutlinedTextFieldCustom(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 2.dp),
                 label = stringResource(R.string.searchApartmentMain),
                 value = searchLocation,
                 onValue = {
@@ -120,9 +131,11 @@ private fun MyBody(
     goToDetail: (id: String) -> Unit
 ) {
     LazyColumn(modifier = modifier.padding(vertical = 6.dp)) {
-        items(mainViewModel.listApartment) {
-            MyItem(mainViewModel, it) { apartment ->
-                goToDetail(apartment.id)
+        items(mainViewModel.listApartment) { item ->
+            item.bitmap?.let {
+                MyItem(mainViewModel, item) { apartment ->
+                    goToDetail(apartment.id)
+                }
             }
         }
     }
@@ -153,18 +166,30 @@ private fun MyItem(
                 maxLines = 1
             )
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(mainDto.linkApartment)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(200.dp)
-                    .padding(top = 10.dp)
-                    .clip(RoundedCornerShape(percent = 15))
-            )
+            if (mainDto.bitmap == null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(mainDto.linkApartment)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(200.dp)
+                        .padding(top = 10.dp)
+                        .clip(RoundedCornerShape(percent = 15))
+                )
+            } else {
+                Image(
+                    bitmap = mainDto.bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(200.dp)
+                        .padding(top = 10.dp)
+                        .clip(RoundedCornerShape(percent = 15))
+                )
+            }
 
             Row(
                 modifier = Modifier
@@ -286,4 +311,28 @@ private fun MyDialog(mainViewModel: MainViewModel = hiltViewModel()) {
     val isLoading by mainViewModel.isLoading.observeAsState(false)
 
     if (isLoading) DialogLoading()
+}
+
+@Composable
+private fun MyFunctionViewModel(mainViewModel: MainViewModel = hiltViewModel()) {
+    val activity = LocalContext.current as Activity
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    mainViewModel.getApartment(activity)
+                }
+
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 }

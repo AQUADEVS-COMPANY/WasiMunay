@@ -1,19 +1,31 @@
 package com.aquadevs.wasimunay.presentation.features.detail
 
+import android.app.Activity
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aquadevs.wasimunay.core.Composable.changeActivity
 import com.aquadevs.wasimunay.core.Validations.getStringToDouble
 import com.aquadevs.wasimunay.core.Validations.getStringToInt
 import com.aquadevs.wasimunay.domain.UseCase.apartment.GetApartmentNetworkUseCase
 import com.aquadevs.wasimunay.domain.UseCase.apartment.SetApartmentNetworkUseCase
+import com.aquadevs.wasimunay.domain.UseCase.camera.DeleteCameraUseCase
+import com.aquadevs.wasimunay.domain.UseCase.camera.DeleteCustomCameraUseCase
+import com.aquadevs.wasimunay.domain.UseCase.camera.GetListCameraUseCase
+import com.aquadevs.wasimunay.presentation.features.camera.CameraActivity
 import com.aquadevs.wasimunay.presentation.model.main.ApartmentDto
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 /***
@@ -29,6 +41,8 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val setApartmentNetworkUseCase: SetApartmentNetworkUseCase,
     private val getApartmentNetworkUseCase: GetApartmentNetworkUseCase,
+    private val deleteCustomCameraUseCase: DeleteCustomCameraUseCase,
+    private val getListCameraUseCase: GetListCameraUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val idApartment: String = savedStateHandle["paramStr"] ?: ""
@@ -69,8 +83,15 @@ class DetailViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     var isLoading: LiveData<Boolean> = _isLoading
 
+    private val _isShowGoogleMaps = MutableLiveData<Boolean>()
+    var isShowGoogleMaps: LiveData<Boolean> = _isShowGoogleMaps
+
+    private val _locationSelected = MutableLiveData<LatLng>()
+    val locationSelected : LiveData<LatLng> = _locationSelected
+
     init {
         validateRegisterScreen()
+        onDetectData()
     }
 
     private fun validateRegisterScreen() {
@@ -89,6 +110,7 @@ class DetailViewModel @Inject constructor(
             7 -> _fullAddress.value = str
             8 -> _linkApartment.value = str
             9 -> _showDialogImage.value = bool
+            10 -> _isShowGoogleMaps.value = bool
         }
 
         enableButtonRegister()
@@ -130,8 +152,7 @@ class DetailViewModel @Inject constructor(
                 !_monthlyPrice.value.isNullOrBlank() &&
                 !_numberSquareMeters.value.isNullOrBlank() &&
                 !_description.value.isNullOrBlank() &&
-                !_fullAddress.value.isNullOrBlank() &&
-                !_linkApartment.value.isNullOrBlank()
+                !_fullAddress.value.isNullOrBlank()
     }
 
     private fun getDataApartment(idApartment: String) {
@@ -156,6 +177,45 @@ class DetailViewModel @Inject constructor(
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = false
+                }
+            }
+        }
+    }
+
+    fun updateLocation(latLng: LatLng){
+        _locationSelected.value = latLng
+    }
+
+    fun goToCamera(activity: Activity){
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteCustomCameraUseCase()
+            withContext(Dispatchers.Main){
+                activity.changeActivity(CameraActivity(), isFinish = false)
+            }
+        }
+    }
+
+    fun getDirection(context: Context) {
+        _isShowGoogleMaps.value = false
+        _fullAddress.value = try {
+            val location = _locationSelected.value ?: LatLng(-13.415377, -76.129222)
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses: List<Address>? = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+            if (!addresses.isNullOrEmpty()){
+                addresses[0].getAddressLine(0)
+            }
+            else ""
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    private fun onDetectData(){
+        viewModelScope.launch {
+            deleteCustomCameraUseCase()
+            getListCameraUseCase().collect { it ->
+                if (it.isNotEmpty()) {
+                    _linkApartment.value = it[0].nameCollection
                 }
             }
         }

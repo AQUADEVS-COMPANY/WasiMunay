@@ -1,13 +1,19 @@
 package com.aquadevs.wasimunay.presentation.features.welcome
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aquadevs.wasimunay.core.Composable.changeActivity
 import com.aquadevs.wasimunay.domain.UseCase.user.AddUserNetworkUseCase
 import com.aquadevs.wasimunay.domain.UseCase.user.GetUserLocalUseCase
 import com.aquadevs.wasimunay.domain.UseCase.welcome.LogInUseCase
+import com.aquadevs.wasimunay.presentation.features.notifications.NotificationActivity
 import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -75,6 +81,32 @@ class WelcomeViewModel @Inject constructor(
                     _namePerson.value = per.name
                 }
             }
+        }
+    }
+
+    fun validatePermission(activity: Activity) {
+        if (
+            ActivityCompat.checkSelfPermission(
+                activity, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(
+                activity, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            activity.changeActivity(NotificationActivity(), isFinish = false, keyCode = "1000")
+            return
+        }
+
+        if (
+            ActivityCompat.checkSelfPermission(
+                activity, Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(
+                activity, Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            activity.changeActivity(NotificationActivity(), isFinish = false, keyCode = "1001")
+            return
         }
     }
 

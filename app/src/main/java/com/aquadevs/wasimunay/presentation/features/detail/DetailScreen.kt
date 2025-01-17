@@ -1,5 +1,6 @@
 package com.aquadevs.wasimunay.presentation.features.detail
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,23 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +40,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.aquadevs.wasimunay.R
 import com.aquadevs.wasimunay.core.Composable.DialogLoading
+import com.aquadevs.wasimunay.core.Composable.changeActivity
 import com.aquadevs.wasimunay.core.Validations.validateDouble
 import com.aquadevs.wasimunay.core.Validations.validateInt
 import com.aquadevs.wasimunay.presentation.common.ButtonCustom
@@ -53,17 +49,15 @@ import com.aquadevs.wasimunay.presentation.common.DialogCustom
 import com.aquadevs.wasimunay.presentation.common.IconButtonCustom
 import com.aquadevs.wasimunay.presentation.common.OutlinedTextFieldCustom
 import com.aquadevs.wasimunay.presentation.common.TextCustom
-import com.aquadevs.wasimunay.presentation.model.main.ApartmentDto
+import com.aquadevs.wasimunay.presentation.features.camera.CameraActivity
 import com.aquadevs.wasimunay.ui.theme.OnBackgroundDark
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
-import kotlinx.coroutines.launch
 
 /***
  * Class: DetalleScreen
@@ -88,6 +82,19 @@ fun DetailScreen(
             modifier = Modifier.fillMaxSize()
         )
 
+        MyBodyGeneral(goBack)
+    }
+}
+
+@Composable
+private fun MyBodyGeneral(
+    goBack: () -> Unit,
+    detailViewModel: DetailViewModel = hiltViewModel()
+) {
+    val isShowGoogleMaps by detailViewModel.isShowGoogleMaps.observeAsState(false)
+
+    if (isShowGoogleMaps) MyGoogleMaps()
+    else {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -291,22 +298,36 @@ private fun MyLocation(detailViewModel: DetailViewModel) {
                 fontWeight = FontWeight.Bold
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextFieldCustom(
                 value = fullAddress,
                 onValue = { detailViewModel.changeInput(id = 7, str = it) },
                 label = stringResource(R.string.fullAddress),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp),
+                    .fillMaxWidth(),
                 enabled = isRegister,
                 maxLength = 100
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ButtonCustom(
+                textButton = stringResource(R.string.seeLocation),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp),
+                textColor = Color.White
+            ) {
+                detailViewModel.changeInput(id = 10, bool = true)
+            }
         }
     }
 }
 
 @Composable
 private fun MyApartment(detailViewModel: DetailViewModel) {
+    val activity = LocalContext.current as Activity
     val isRegister by detailViewModel.isRegisterScreen.observeAsState(false)
     val linkApartment by detailViewModel.linkApartment.observeAsState(initial = "")
 
@@ -320,20 +341,20 @@ private fun MyApartment(detailViewModel: DetailViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextCustom(
-                    text = stringResource(R.string.enterLinkApartment),
+                    text = stringResource(R.string.takePhotoApartment),
                     fontSize = 22,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
 
                 OutlinedTextFieldCustom(
-                    value = linkApartment,
-                    onValue = { detailViewModel.changeInput(id = 8, str = it) },
-                    label = stringResource(R.string.enterLink),
+                    value = if (linkApartment.isEmpty()) "Sin foto" else "Foto actualizada",
+                    onValue = { },
+                    label = "",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
-                    enabled = isRegister,
+                    enabled = false,
                     maxLength = 1000,
                     keyBoardType = KeyboardType.Text
                 )
@@ -343,11 +364,10 @@ private fun MyApartment(detailViewModel: DetailViewModel) {
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                         .height(45.dp),
-                    textButton = stringResource(R.string.verify),
-                    enabled = linkApartment.isNotEmpty(),
+                    textButton = stringResource(R.string.takePhoto),
                     textColor = Color.White
                 ) {
-                    detailViewModel.changeInput(id = 9, bool = true)
+                    detailViewModel.goToCamera(activity)
                 }
             }
         }
@@ -366,7 +386,7 @@ private fun MyFooter(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 20.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -433,79 +453,74 @@ private fun MyDialogImage(detailViewModel: DetailViewModel) {
     }
 }
 
-/*
 @Composable
-fun MyGoogleMaps(modifier: Modifier = Modifier) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
+private fun MyGoogleMaps(detailViewModel: DetailViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+    Box(modifier = Modifier.fillMaxSize()) {
+        IconButtonCustom(
+            icon = Icons.Filled.ArrowBack,
+            iconColor = Color.DarkGray,
+            iconSize = 20,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(10.dp)
         ) {
-            GoogleMap(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues = it)
-            ) {
+            detailViewModel.changeInput(id = 10, bool = false)
+        }
 
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(
+                LatLng(-13.415377, -76.129222), 17f
+            )
+        }
+
+        val uiSetting = MapUiSettings(
+            compassEnabled = false,
+            rotationGesturesEnabled = true,
+            scrollGesturesEnabled = true,
+            tiltGesturesEnabled = true,
+            zoomGesturesEnabled = true,
+            zoomControlsEnabled = false,
+            scrollGesturesEnabledDuringRotateOrZoom = true,
+        )
+
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            uiSettings = uiSetting
+        ) {
+            DraggableMarker(
+                initialPosition = LatLng(-13.415377, -76.129222)
+            ) { latLng ->
+                detailViewModel.updateLocation(latLng)
             }
         }
 
         ButtonCustom(
-            textButton = "Capturar ubicación"
+            textButton = stringResource(R.string.captureLocation),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 15.dp)
+                .align(Alignment.BottomCenter)
+                .height(45.dp),
+            textColor = Color.White
         ) {
-
+            detailViewModel.getDirection(context)
         }
     }
 }
 
 @Composable
-fun LocationPickerScreen() {
-    var selectedLocation by remember { mutableStateOf<LatLng?>(null) }
-
-    MapWithMarkerSelector(
-        initialLocation = LatLng(-12.0464, -77.0428) // Ejemplo: Ubicación inicial
-    ) { location ->
-        selectedLocation = location
-        // Realiza una acción con la ubicación seleccionada
-        Log.d("LocationPicker", "Ubicación seleccionada: $location")
-    }
-}
-
-@Composable
-fun MapWithMarkerSelector(
-    initialLocation: LatLng = LatLng(-12.0464, -77.0428), // Ubicación inicial (Lima, Perú)
-    onLocationSelected: (LatLng) -> Unit // Callback para devolver la ubicación seleccionada
+private fun DraggableMarker(
+    initialPosition: LatLng,
+    onUpdate: (LatLng) -> Unit
 ) {
-    // Estado para almacenar la ubicación del marcador
-    var markerPosition by remember { mutableStateOf(initialLocation) }
-    var cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(initialLocation, 15f) // Zoom inicial
-    }
+    val state = remember { MarkerState(initialPosition) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            onMapClick = { latLng ->
-                // Actualiza la posición del marcador al hacer clic en el mapa
-                markerPosition = latLng
-            }
-        ) {
-            val markerState = rememberMarkerState(position = markerPosition)
-            // Renderiza el marcador en la posición seleccionada
-            Marker(
-                state = markerState,
-                title = "Ubicación seleccionada",
-                snippet = "${markerPosition.latitude}, ${markerPosition.longitude}"
-            )
-        }
-    }
+    Marker(state, draggable = true)
 
-    // Llama al callback cuando el marcador cambie
-    LaunchedEffect(markerPosition) {
-        onLocationSelected(markerPosition)
+    LaunchedEffect(Unit) {
+        snapshotFlow { state.position }
+            .collect { position -> onUpdate(position) }
     }
 }
-
-*/

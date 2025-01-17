@@ -2,7 +2,9 @@ package com.aquadevs.wasimunay.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.aquadevs.wasimunay.data.database.dao.CameraDao
 import com.aquadevs.wasimunay.data.database.dao.UserDao
+import com.aquadevs.wasimunay.data.database.model.CameraEntity
 import com.aquadevs.wasimunay.data.database.model.UserEntity
 
 /***
@@ -16,10 +18,12 @@ import com.aquadevs.wasimunay.data.database.model.UserEntity
 
 @Database(
     entities = [
-        UserEntity::class
+        UserEntity::class,
+        CameraEntity::class
     ],
     version = 1
 )
 abstract class AppDataBase : RoomDatabase() {
     abstract fun userDao(): UserDao
+    abstract fun cameraDao(): CameraDao
 }

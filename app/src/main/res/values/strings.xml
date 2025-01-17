@@ -36,7 +36,21 @@
     <string name="sqaureMeters">m2</string>
     <string name="register">Registrar</string>
     <string name="enterLinkApartment">Link del apartamento</string>
+    <string name="takePhotoApartment">Tomar foto al apartamento</string>
+    <string name="takePhoto">Tomar foto</string>
     <string name="verify">Verificar</string>
     <string name="enterLink">Ingresa enlace</string>
     <string name="logOut">Cerrar sesión</string>
+    <string name="seeLocation">Ver ubicación</string>
+    <string name="captureLocation">Capturar ubicación</string>
+    <string name="title_activity_camera">CameraActivity</string>
+    <string name="title_activity_notification">NotificationActivity</string>
+    <string name="msgPermissionDeneidGoToSettings">Los permisos de la ubicación han sido denegados permanentemente. Ve a configuración para habilitarlos.</string>
+    <string name="openSettings">Abrir configuración</string>
+    <string name="msgPermissionNeedLocation">WasiMunay necesita acceso a tu ubicación para continuar.</string>
+    <string name="requestPermissions">Solicitar permisos</string>
+    <string name="msgPermissionsGranted">Permisos concedidos</string>
+
+    <string name="msgPermissionDeneidGoToSettingsCamera">Los permisos de la cámara han sido denegados permanentemente. Ve a configuración para habilitarlos.</string>
+    <string name="msgPermissionNeedCamara">WasiMunay necesita acceso a tu camara para continuar.</string>
 </resources>
