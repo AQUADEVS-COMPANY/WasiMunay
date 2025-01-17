@@ -10,15 +10,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -26,12 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.aquadevs.wasimunay.R
 import com.aquadevs.wasimunay.core.Composable.DialogLoading
 import com.aquadevs.wasimunay.core.Constants.ID_TOKEN_GOOGLE
@@ -73,6 +75,7 @@ fun WelcomeScreen(goToMain: () -> Unit, goToDetail: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            MyFunctionViewModel()
             MyHeader()
             MyBody(goToMain = goToMain, goToDetail = goToDetail)
             MyDialog()
@@ -238,4 +241,27 @@ private fun MyDialog(welcomeViewModel: WelcomeViewModel = hiltViewModel()) {
     val isLoading by welcomeViewModel.isLoading.observeAsState(false)
 
     if (isLoading) DialogLoading()
+}
+
+@Composable
+private fun MyFunctionViewModel(welcomeViewModel: WelcomeViewModel = hiltViewModel()) {
+    val activity = LocalContext.current as Activity
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    welcomeViewModel.validatePermission(activity)
+                }
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 }

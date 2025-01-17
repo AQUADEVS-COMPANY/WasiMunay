@@ -98,6 +98,20 @@ dependencies {
     //GOOGLE MAPS
     implementation(libs.maps.compose)
     implementation(libs.play.services.location)
+
+    //CAMERA X
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.video)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.extensions)
+
+    //LOTTIE
+    implementation(libs.lottie.compose)
+
+    //PERMISSIONS
+    implementation(libs.accompanist.permissions)
 }
 
 kapt {

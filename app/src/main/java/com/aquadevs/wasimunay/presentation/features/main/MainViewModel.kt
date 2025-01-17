@@ -46,16 +46,12 @@ class MainViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    init {
-        getApartment()
-    }
-
-    private fun getApartment() {
+    fun getApartment(context: Context) {
         _isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 listOriginalApartment = listOf()
-                listOriginalApartment = getListApartmentNetworkUseCase()
+                listOriginalApartment = getListApartmentNetworkUseCase(context)
                 withContext(Dispatchers.Main) {
                     _listApartment.clear()
                     _isLoading.value = false

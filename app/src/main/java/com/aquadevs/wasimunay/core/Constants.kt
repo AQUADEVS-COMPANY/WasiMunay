@@ -12,4 +12,7 @@ object Constants {
     const val CO_APARTMENT_ID_CREATION_USER = "idUserCreate"
 
     const val CO_USER_EMAIL_USER = "email"
+
+    //CONSTANTS
+    const val WASIMUNAY_FILE_PHOTOS = "WASIMUNAY_FILE_PHOTOS"
 }

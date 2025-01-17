@@ -1,17 +1,26 @@
 package com.aquadevs.wasimunay.core
 
+import android.app.Activity
+import android.content.Intent
+import androidx.annotation.RawRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.aquadevs.wasimunay.presentation.common.CircularProgressCustom
 import com.aquadevs.wasimunay.presentation.common.DialogCustom
 import com.aquadevs.wasimunay.presentation.common.TextCustom
@@ -41,5 +50,31 @@ object Composable {
                 }
             }
         }
+    }
+
+    fun Activity.changeActivity(activity: Activity, isFinish: Boolean = true, keyCode:String = "") {
+        val intent = Intent(this, activity::class.java).apply {
+            putExtra("KEY_CODE", keyCode)
+        }
+        startActivity(intent)
+        if (isFinish) finish()
+    }
+
+    @Composable
+    fun AnimationLottie(
+        modifier: Modifier = Modifier,
+        size: Int,
+        @RawRes lottie: Int,
+        isPlaying: Boolean = true
+    ) {
+        val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(lottie))
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            isPlaying = isPlaying,
+            modifier = modifier
+                .size(size.dp)
+                .background(Color.Transparent)
+        )
     }
 }
